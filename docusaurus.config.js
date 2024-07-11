@@ -21,7 +21,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'mbaas-inc', // Usually your GitHub org/user name.
-  projectName: 'aiapp', // Usually your repo name.
+  projectName: 'mbaas-docs', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
