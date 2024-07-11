@@ -95,7 +95,7 @@
 
 **Authentication:** Bearer Token
 
-**API Key:** ??????
+**API Key:** `<ACCESS_TOKEN>`
 
 ---
 
@@ -157,7 +157,7 @@ curl -X GET 'https://api.aiapp.link/api/app/health' \
 **Example:**
 
 ```bash
-$ curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
+curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
 -H 'Content-Type: application/json;charset=utf-8' \
 -H 'Accept: */*' \
 -d '{
@@ -212,7 +212,7 @@ $ curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
 **Example:**
 
 ```bash
-$ curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
+curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -H 'Accept: */*' \
     -d '{
@@ -262,7 +262,7 @@ $ curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
 **Example:**
 
 ```bash
-$ curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
+curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -H 'Accept: */*' \
     -d '{
@@ -335,7 +335,7 @@ $ curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
 **Example:**
 
 ```bash
-$ curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
+curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -H 'Accept: */*' \
     -d '{
@@ -398,7 +398,7 @@ $ curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
 **Example:**
 
 ```bash
-$ curl -X POST 'https://api.aiapp.link/api/app/member/login' \
+curl -X POST 'https://api.aiapp.link/api/app/member/login' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -H 'Accept: */*' \
     -d '{
@@ -442,7 +442,7 @@ $ curl -X POST 'https://api.aiapp.link/api/app/member/login' \
 **Example:**
 
 ```bash
-$ curl -X GET 'https://api.aiapp.link/api/app/member/info' \
+curl -X GET 'https://api.aiapp.link/api/app/member/info' \
     -H 'Content-Type: application/json;charset=utf-8' \
     -H 'Authorization: Bearer {token}}' \
     -H 'Accept: */*'
@@ -513,7 +513,7 @@ $ curl -X GET 'https://api.aiapp.link/api/app/member/info' \
 **Example:**
 
 ```bash
-$ curl -X POST 'https://api.aiapp.link/api/app/member/info/profile' \
+curl -X POST 'https://api.aiapp.link/api/app/member/info/profile' \
     -H 'Content-Type: multipart/form-data;charset=UTF-8' \
     -H 'Authorization: Bearer {token}}' \
     -F 'file=test.png;type=multipart/form-data'
