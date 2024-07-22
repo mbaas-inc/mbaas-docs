@@ -22,6 +22,18 @@
 5. [자주 묻는 질문](#자주-묻는-질문)
 
 ---
+## API 개요
+
+**Base URL:**
+- `https://api.aiapp.link/aiapp`
+
+**Base Header**
+- Authorization-Key : `{API Key}`
+
+**Authentication:**
+- Authorization : `Bearer Token`
+
+---
 ## AppBoard 객체
 
 ### Response 객체 상세
@@ -31,6 +43,9 @@
 - **data**: 요청 결과에 대한 데이터를 포함합니다. 예) `data.appCode`
 - **message**: 요청의 결과에 추가 메시지나 실패 시 `CustomErrorCode`의 내용을 응답합니다.
 - **errorCode**: 발생한 예외의 `CustomErrorCode`를 응답합니다.
+- **error** : `API Key` 관련 예외 발생시 응답합니다.
+    - `Missing Key` : RequestHeader 에서 `Authorization-Key` 를 추가해주세요.
+    - `Method not allowed` : `API Key` 가 올바르지 않습니다.
 
 ### Page 객체 상세
 - **next**
@@ -137,8 +152,8 @@
           - **설명**: 파일 URL 개별 항목.
 
 - **prevContent**
-  - **타입**: `Object` `nullable`
-  - **설명**: 이전 공지사항 내용 객체 .
+  - **타입**: `Object`
+  - **설명**: 이전 공지사항 내용 객체 (`nullable`).
       - **prevContent.sequence**
           - **타입**: `Integer`
           - **설명**: 이전 공지사항 순서.
@@ -158,17 +173,6 @@
   - **타입**: `Object`
   - **설명**: 다음 공지사항 내용 객체 (`nullable`).
 ---
-## API 개요
-
-**Base URL:** `https://api.aiapp.link/`
-
-**Version:** v1
-
-**Authentication:** Bearer Token
-
-**API Key:** ??????
-
----
 
 ## 엔드포인트
 
@@ -182,8 +186,9 @@
 **Example:**
 
 ```bash
-curl -X GET 'https://api.aiapp.link/api/app/health' \
-  -H 'accept: application/json'
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/app/health' \
+      --header 'Authorization-Key: {API Key}'
 ```
 
 **Responses Body:**
@@ -204,19 +209,21 @@ curl -X GET 'https://api.aiapp.link/api/app/health' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **Example:**
 
 ```bash
-$ curl -X GET 'https://api.aiapp.link/app-board/member/qna' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -H 'Authorization: Bearer {token}}' \
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json'
 ```
+
 **Responses Body:**
 
 - **Status Code:** `200`
@@ -341,10 +348,10 @@ $ curl -X GET 'https://api.aiapp.link/app-board/member/qna' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key          |
 
 **Request Body:**
 
@@ -387,21 +394,21 @@ $ curl -X GET 'https://api.aiapp.link/app-board/member/qna' \
 **Example:**
 
 ```bash
-curl -X 'POST' \
-  'https://api.aiapp.link/app-board/member/qna' \
-  -H 'accept: */*' \
-  -H 'Authorization: Bearer {token}' \
-  -H 'Content-Type: application/json' \
-  -d '{
-          "title": "제목",
-          "content": "내용",
-          "type": {
-            "value": "TRADE",
-            "name": "거래문의",
-            "type": "TRADE"
-          },
-          "fileId": ""
-      }'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                  "title": "제목",
+                  "content": "내용",
+                  "type": {
+                    "value": "TRADE",
+                    "name": "거래문의",
+                    "type": "TRADE"
+                  },
+                  "fileId": ""
+              }'
 ```
 
 **Responses Body:**
@@ -427,9 +434,10 @@ curl -X 'POST' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key          |
 
 
 
@@ -476,22 +484,22 @@ curl -X 'POST' \
 **Example:**
 
 ```bash
-curl -X 'PUT' \
-  'https://api.aiapp.link/app-board/member/qna' \
-  -H 'accept: */*' \
-  -H 'Authorization: Bearer {token}' \
-  -H 'Content-Type: application/json' \
-  -d '{
-        "qnaCode": "qna_NGKNLEkNAqXuXnfC",
-          "title": "제목",
-          "content": "내용",
-          "type": {
-            "value": "TRADE",
-            "name": "거래문의",
-            "type": "TRADE"
-          },
-          "fileId": ""
-      }'
+curl --request 'PUT' \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "qnaCode": "qna_NGKNLEkNAqXuXnfC",
+                  "title": "제목",
+                  "content": "내용",
+                  "type": {
+                    "value": "TRADE",
+                    "name": "거래문의",
+                    "type": "TRADE"
+                  },
+                  "fileId": ""
+              }'
 ```
 
 **Responses Body:**
@@ -515,10 +523,10 @@ curl -X 'PUT' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key          |
 
 **Request Body:**
 
@@ -540,16 +548,16 @@ curl -X 'PUT' \
 **Example:**
 
 ```bash
-curl -X 'DELETE' \
-      'https://api.aiapp.link/app-board/member/qna' \
-      -H 'accept: */*' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "qnaCodeList": [
-              "qna_NGKNLEkNAqXuXnfC"
-              ]
-          }'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                  "qnaCodeList": [
+                      "qna_NGKNLEkNAqXuXnfC"
+                  ]
+              }'
 ```
 
 **Responses Body:**
@@ -575,10 +583,10 @@ curl -X 'DELETE' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key          |
 
 **Request Body:**
 
@@ -598,15 +606,15 @@ curl -X 'DELETE' \
 **Example:**
 
 ```bash
-curl -X 'POST' \
-      'http://api.aiapp.link/app-board/member/qna/file' \
-      -H 'accept: */*' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "qnaCode": "qna_NGKNLEkNAqXuXnfC",
-            "fileId": "FLE_2408"
-          }'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna/file' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "qnaCode": "qna_NGKNLEkNAqXuXnfC",
+                "fileId": "FLE_2408"
+              }'
 ```
 
 **Responses Body:**
@@ -630,10 +638,10 @@ curl -X 'POST' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
-
+| Name                | Description    |
+|---------------------|----------------|
+| `Authorization`     | 로그인 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key      |
 
 **PathParameters**
 
@@ -644,10 +652,10 @@ curl -X 'POST' \
 **Example:**
 
 ```bash
-$ curl -X 'POST' \ 
-        'https://api.aiapp.link/app-board/member/qna/{qnaCode}' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna/{qnaCode}' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -711,10 +719,10 @@ $ curl -X 'POST' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
-
+| Name                | Description    |
+|---------------------|----------------|
+| `Authorization`     | 로그인 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key      |
 
 **QueryParameters**
 
@@ -731,10 +739,10 @@ $ curl -X 'POST' \
 **Example:**
 
 ```bash
-$ curl -X GET\ 
-        'https://api.aiapp.link/app-board/member/notice/{noticeCode}?appCode=""' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/notice/{noticeCode}?appCode={appCode}' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -797,18 +805,19 @@ $ curl -X GET\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | 앱 엑세스 key          |
 
 **Example:**
 
 ```bash
-$ curl -X GET 'https://api.aiapp.link/app-board/member/qna' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -H 'Authorization: Bearer {token}}' \
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/app-board/member/qna' \
+      --header 'Authorization-key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json'
 ```
 **Responses Body:**
 
@@ -888,7 +897,7 @@ $ curl -X GET 'https://api.aiapp.link/app-board/member/qna' \
 ## 자주 묻는 질문
 
 ### Q: 인증은 어떻게 하나요?
-A: `Authorization` 헤더에 Bearer 토큰을 보내야 합니다.
-
+A: `Authorization` 헤더에 Bearer 토큰을 보내야 합니다.  
+A: `Authorization-Key` 헤더에 앱 엑세스 키를 보내야 합니다.
 ### Q: 요청 본문은 어떤 형식이어야 하나요?
 A: 이미지 업로드를 제외한 모든 요청 본문은 `JSON` 형식이어야 합니다.
