@@ -2,8 +2,8 @@
 
 ---
 
-1. [AppMember 객체](#AppMember-객체)
-2. [API 개요](#api-개요)
+1. [API 개요](#api-개요)
+2. [AppMember 객체](#AppMember-객체)
 3. 엔드포인트
    - [게이트웨이 연결 테스트](#게이트웨이-연결-테스트)
    - [이메일 인증번호 발송](#이메일-인증번호-발송)
@@ -27,18 +27,34 @@
      - [Status](#status)
 5. [자주 묻는 질문](#자주-묻는-질문)
 
+
+---
+## API 개요
+
+**Base URL:**
+- `https://api.aiapp.link/aiapp`
+
+**Base Header**
+- Authorization-Key : `{API Key}`
+
+**Authentication:**
+- Authorization : `Bearer Token`
+
 ---
 ## AppMember 객체
 
-### Response 객체 상세
+### Rsponse 객체 상세
 - **result**
   - **`SUCCESS`**: 요청의 결과 성공을 나타냅니다.
   - **`FAIL`**: 요청에 문제가 있어 실패했음을 나타냅니다.
 - **data**: 요청 결과에 대한 데이터를 포함합니다. 예) `data.appCode`
 - **message**: 요청의 결과에 추가 메시지나 실패 시 `CustomErrorCode`의 내용을 응답합니다.
 - **errorCode**: 발생한 예외의 `CustomErrorCode`를 응답합니다.
+- **error** : `API Key` 관련 예외 발생시 응답합니다. 
+  - `Missing Key` : RequestHeader 에서 `Authorization-Key` 를 추가해주세요.
+  - `Method not allowed` : `API Key` 가 올바르지 않습니다.
 
-### App 회원 객체 상세
+### App Member 객체 상세
 - **appCode**
   - **타입**: `String`
   - **설명**: 애플리케이션의 고유 코드를 나타내며, 인증 요청 시 해당 앱을 식별하는 데 사용됩니다.
@@ -73,29 +89,19 @@
 
 - **emailAuthType**
   - **타입**: `Enum`
-  - **설명**: 이메일 인증 요청의 타입을 지정합니다. 두 가지 값이 있습니다:
+  - **설명**: 이메일 인증 요청의 타입을 지정합니다. 두 가지 값이 있습니다.
     - **`JOIN`**: 회원 가입 과정에서 이메일 인증을 요청할 때 사용합니다.
     - **`PW`**: 비밀번호 재설정 과정에서 이메일 인증을 요청할 때 사용합니다.
 
 - **appMemberStatus**
   - **타입**: `Enum`
-  - **설명**: App 회원의 상태를 나타냅니다. 다섯 가지 값이 있습니다:
+  - **설명**: App 회원의 상태를 나타냅니다. 다섯 가지 값이 있습니다.
     - **`GREEN`**: 활동 상태의 App 회원을 나타냅니다.
     - **`YELLOW`**: 정지 상태의 App 회원을 나타냅니다.
     - **`BLUE`**: 휴면 상태의 App 회원을 나타냅니다.
     - **`RED`**: 탈퇴 상태의 App 회원을 나타냅니다.
     - **`BLACK`**: 강퇴 상태의 App 회원을 나타냅니다.
 
----
-## API 개요
-
-**Base URL:** `https://api.aiapp.link/api`
-
-**Version:** v1
-
-**Authentication:** Bearer Token
-
-**API Key:** `<ACCESS_TOKEN>`
 
 ---
 
@@ -108,11 +114,18 @@
 - **Method:** `GET`
 - **Description:** 게이트웨이를 통한 연결을 확인합니다.
 
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
+
 **Example:**
 
 ```bash
-curl -X GET 'https://api.aiapp.link/api/app/health' \
-  -H 'accept: application/json'
+curl --request GET \
+  --url 'https://api.aiapp.link/aiapp/app/health' \
+  --header 'Authorization-key: {API Key}'
 ```
 
 **Responses Body:**
@@ -129,6 +142,11 @@ curl -X GET 'https://api.aiapp.link/api/app/health' \
 - **Method:** `POST`
 - **Description:** 이메일 인증을 요청합니다.
 
+- **RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
 
 **Request Body:**
 
@@ -157,14 +175,15 @@ curl -X GET 'https://api.aiapp.link/api/app/health' \
 **Example:**
 
 ```bash
-curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
--H 'Content-Type: application/json;charset=utf-8' \
--H 'Accept: */*' \
--d '{
-"appCode" : "testAppCode",
-"appMemberEmail" : "jjunmo@mbaas.kr",
-"emailAuthType" : "JOIN"
-}'
+curl --request POST \
+    --url 'https://api.aiapp.link/aiapp/app/member/auth/send' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: application/json' \
+    --data '{
+                "appCode" : "testAppCode",
+                "appMemberEmail" : "jjunmo@mbaas.kr",
+                "emailAuthType" : "JOIN"
+            }'
 ```
 **Responses Body:**
 
@@ -181,6 +200,11 @@ curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
 - **Method:** `PUT`
 - **Description:** 이메일 인증을 요청합니다.
 
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
 
 **Request Body:**
 
@@ -212,15 +236,16 @@ curl -X POST 'https://api.aiapp.link/api/app/member/auth/send' \
 **Example:**
 
 ```bash
-curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -d '{
-  "appMemberEmail" : "jjunmo@mbaas.kr",
-  "authCode" : "123456",
-  "emailAuthType" : "JOIN",
-  "appCode" : "testAppCode"
-}'
+curl --request PUT \
+    --url 'https://api.aiapp.link/aiapp/app/member/auth/send' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: application/json' \
+    --data '{
+              "appMemberEmail" : "jjunmo@mbaas.kr",
+              "authCode" : "123456",
+              "emailAuthType" : "JOIN",
+              "appCode" : "testAppCode"
+            }'
 ```
 
 **Responses Body:**
@@ -237,7 +262,13 @@ curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
 
 - **URL:** `/app/member/auth`
 - **Method:** `POST`
-- **Description:** 비밀번호를 재설정 합니다..
+- **Description:** 비밀번호를 재설정 합니다.
+
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Request Body:**
@@ -262,15 +293,16 @@ curl -X PUT 'https://api.aiapp.link/api/app/member/auth/send' \
 **Example:**
 
 ```bash
-curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -d '{
-  "appCode" : "testAppCode",
-  "appMemberEmail" : "update@test.com",
-  "appMemberExPassword" : "1234567",
-  "appMemberNewPassword" : "1234567"
-}'
+curl --request POST \
+    --url 'https://api.aiapp.link/aiapp/app/member/auth' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: application/json' \
+    --data '{
+              "appCode" : "testAppCode",
+              "appMemberEmail" : "update@test.com",
+              "appMemberExPassword" : "1234567",
+              "appMemberNewPassword" : "1234567"
+            }'
 ```
 
 **Responses Body:**
@@ -287,6 +319,12 @@ curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
 - **URL:** `/app/member/join`
 - **Method:** `POST`
 - **Description:** App 에 회원가입 합니다.
+
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Request Body:**
@@ -335,18 +373,18 @@ curl -X POST 'https://devapi.aiapp.link/api/app/member/auth' \
 **Example:**
 
 ```bash
-curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -d '{
-  "appMemberEmail" : "register@test.com",
-  "appMemberPassword" : "123456",
-  "appMemberPhone" : "01091097122",
-  "appMemberName" : "회원가입테스트",
-  "appMemberType" : "GENERAL",
-  "appCode" : "testAppCode",
-  "appMemberPrivateAgree" : "Y"
-}'
+curl --request POST 'https://api.aiapp.link/aiapp/app/member/join' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: application/json' \
+    --data '{
+              "appMemberEmail" : "register@test.com",
+              "appMemberPassword" : "123456",
+              "appMemberPhone" : "01091097122",
+              "appMemberName" : "회원가입",
+              "appMemberType" : "GENERAL",
+              "appCode" : "testAppCode",
+              "appMemberPrivateAgree" : "Y"
+            }'
 ```
 
 **Responses Body:**
@@ -364,6 +402,12 @@ curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
 - **URL:** `/app/member/join`
 - **Method:** `POST`
 - **Description:** App 에 회원가입 합니다.
+
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------| 
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Request Body:**
@@ -398,15 +442,16 @@ curl -X POST 'https://devapi.aiapp.link/api/app/member/join' \
 **Example:**
 
 ```bash
-curl -X POST 'https://api.aiapp.link/api/app/member/login' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Accept: */*' \
-    -d '{
-  "appMemberEmail" : "test@test.com",
-  "appMemberPassword" : "123456",
-  "appCode" : "testAppCode",
-  "appMemberType" : "GENERAL"
-}'
+curl --request POST \
+    --url 'https://api.aiapp.link/aiapp/app/member/login' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: application/json' \
+    --data '{
+              "appMemberEmail" : "test@test.com",
+              "appMemberPassword" : "123456",
+              "appCode" : "testAppCode",
+              "appMemberType" : "GENERAL"
+            }'
 ```
 
 **Responses Body:**
@@ -417,7 +462,7 @@ curl -X POST 'https://api.aiapp.link/api/app/member/login' \
 {
   "result" : "SUCCESS",
   "data" : {
-    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJhcHBNZW1iZXJJZHgiOjEsImFwcENvZGUiOiJ0ZXN0QXBwQ29kZSIsImFwcE1lbWJlck5hbWUiOiLthYzsiqTtirgg7ZqM7JuQIiwiYXBwTWVtYmVyQ29kZSI6InRlc3RBcHBNZW1iZXJDb2RlIiwiZXhwIjoxNzIxMjAxMjExfQ.o2wvn8_kKRPOrC5MDnM5XysPEPfNtsW6LA3MZmlHDUlvkgT8evM5OosD9hpEIXxbSERTSIcmB8Dy9dKY1epxtw"
+    "accessToken" : "{token}"
   },
   "message" : "로그인 완료"
 }
@@ -434,18 +479,21 @@ curl -X POST 'https://api.aiapp.link/api/app/member/login' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description    |
+|---------------------|----------------| 
+| `Authorization-Key` | API 엑세스 key    |
+| `Authorization`     | 로그인 회원의 JWT 토큰 |
 
 
 **Example:**
 
 ```bash
-curl -X GET 'https://api.aiapp.link/api/app/member/info' \
-    -H 'Content-Type: application/json;charset=utf-8' \
-    -H 'Authorization: Bearer {token}}' \
-    -H 'Accept: */*'
+curl --request GET \
+    --url 'https://api.aiapp.link/aiapp/app/member/info' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Authorization: Bearer {token}' \
+    --header 'Content-Type: application/json'
+
 ```
 
 **Responses Body:**
@@ -499,9 +547,10 @@ curl -X GET 'https://api.aiapp.link/api/app/member/info' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description    |
+|---------------------|----------------| 
+| `Authorization-Key` | API 엑세스 key    |
+| `Authorization`     | 로그인 회원의 JWT 토큰 |
 
 
 **QueryParameters**
@@ -513,10 +562,12 @@ curl -X GET 'https://api.aiapp.link/api/app/member/info' \
 **Example:**
 
 ```bash
-curl -X POST 'https://api.aiapp.link/api/app/member/info/profile' \
-    -H 'Content-Type: multipart/form-data;charset=UTF-8' \
-    -H 'Authorization: Bearer {token}}' \
-    -F 'file=test.png;type=multipart/form-data'
+curl --request POST \
+    --url 'https://api.aiapp.link/aiapp/app/member/info/profile' \
+    --header 'Authorization-key: {API Key}' \
+    --header 'Content-Type: multipart/form-data;charset=UTF-8' \
+    --header 'Authorization: Bearer {token}}' \
+    --form 'file=test.png;type=multipart/form-data'
 ```
 
 **Responses Body:**
