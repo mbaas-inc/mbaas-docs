@@ -2,8 +2,8 @@
 
 ---
 
-1. [AppBoard 객체](#AppBoard-객체)
-2. [API 개요](#api-개요)
+1. [API 개요](#api-개요)
+2. [AppContent 객체](#AppContent-객체)
 3. 엔드포인트
    - [게이트웨이 연결 테스트](#게이트웨이-연결-테스트)
    - Basic App
@@ -12,8 +12,8 @@
         - [App 회원 알림](#app-회원-알림)
         - [App 회원 알림 수동 처리](#app-회원-알림-수동-처리)
       - 일정관리
-        - [일정관리 리스트 가져오기](#일정관리-리스트-가져오기)
-        - [일정관리 등록된 일정 정보 조회](#일정관리에-등록된-일정-정보-조회하기)
+        - [일정 리스트 가져오기](#일정-리스트-가져오기)
+        - [일정 상세내용 조회하기](#일정-상세내용-조회하기)
       - 게시판
         - [게시물 리스트 가져오기](#게시물-리스트-가져오기-V2)
         - [게시물 저장하기](#게시물-저장하기-V2)
@@ -50,6 +50,18 @@
     - [CustomErrorCode](#customerrorcode)
 5. [자주 묻는 질문](#자주-묻는-질문)
 
+---
+
+## API 개요
+
+**Base URL:**
+- `https://api.aiapp.link/aiapp`
+
+**Base Header**
+- Authorization-Key : `{API Key}`
+
+**Authentication:**
+- Authorization : `Bearer Token`
 
 ---
 ## AppContent 객체
@@ -61,6 +73,9 @@
 - **data**: 요청 결과에 대한 데이터를 포함합니다. 예) `data.appCode`
 - **message**: 요청의 결과에 추가 메시지나 실패 시 `CustomErrorCode`의 내용을 응답합니다.
 - **errorCode**: 발생한 예외의 `CustomErrorCode`를 응답합니다.
+- **error** : `API Key` 관련 예외 발생시 응답합니다.
+    - `Missing Key` : RequestHeader 에서 `Authorization-Key` 를 추가해주세요.
+    - `Method not allowed` : `API Key` 가 올바르지 않습니다.
 
 ### App 회원 알림 객체 상세
 
@@ -287,17 +302,6 @@
     - **타입**: `Enum`
     - **설명**: 상태.
 ---
-## API 개요
-
-**Base URL:** `https://api.aiapp.link/`
-
-**Version:** v1
-
-**Authentication:** Bearer Token
-
-**API Key:** ??????
-
----
 
 ## 엔드포인트
 
@@ -308,11 +312,18 @@
 - **Method:** `GET`
 - **Description:** 게이트웨이를 통한 연결을 확인합니다.
 
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization-Key` | API 엑세스 key        |
+
 **Example:**
 
 ```bash
-curl -X GET 'https://api.aiapp.link/api/app/health' \
-  -H 'accept: application/json'
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/app/health' \
+      --header 'Authorization-Key: {API Key}'
 ```
 
 **Responses Body:**
@@ -334,18 +345,19 @@ curl -X GET 'https://api.aiapp.link/api/app/health' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Example:**
 
 ```bash
-$ curl -X 'GET' \ 
-        'https://api.aiapp.link/content/v2/menu' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/v2/menu' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -416,18 +428,18 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **Example:**
 
 ```bash
-$ curl -X 'GET' \
-  'https://api.aiapp.link/content/notification' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer {token}'
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/notification' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 **Responses Body:**
 
@@ -482,9 +494,10 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Request Body:**
@@ -504,14 +517,14 @@ $ curl -X 'GET' \
 **Example:**
 
 ```bash
-$ curl -X 'DELETE' \
-  'https://api.aiapp.link/content/notifications' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer {token}}' \
-  -H 'Content-Type: application/json' \
-  -d '{
-        "relationCode": "string"
-      }'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/notifications' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "relationCode": "string"
+              }'
 ```
 
 **Responses Body:**
@@ -539,18 +552,19 @@ $ curl -X 'DELETE' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Example:**
 
 ```bash
-$ curl -X 'GET' \ 
-        'https://api.aiapp.link//content/V2/schedule' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/schedule' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -592,9 +606,10 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -606,10 +621,10 @@ $ curl -X 'GET' \
 **Example:**
 
 ```bash
-$ curl -X 'GET' \ 
-        'https://api.aiapp.link//content/V2/schedule/{code}' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/schedule/{code}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -655,9 +670,10 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -668,10 +684,10 @@ $ curl -X 'GET' \
 **Example:**
 
 ```bash
-$ curl -X 'GET'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
+curl --request 'GET'\
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
@@ -826,9 +842,10 @@ $ curl -X 'GET'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -861,18 +878,18 @@ $ curl -X 'GET'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "title": "제목",
-            "content": "내용",
-            "image": "이미지",
-            "download": "다운로드",
-            "videoLink": "https://www.aipp.help"
-          }'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "title": "제목",
+                "content": "내용",
+                "image": "이미지",
+                "download": "다운로드",
+                "videoLink": "https://www.aipp.help"
+              }'
 ```
 
 **Responses Body:**
@@ -905,9 +922,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -942,19 +960,19 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'PUT'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-              "code": "cmy_Pq7BFjHCWSaKBJoC",
-              "title": "제목수정",
-              "content": "내용수정",
-              "image": "string",
-              "download": "string",
-              "videoLink": "https://www.aiapp.help"
-          }'
+curl --request 'PUT' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                  "code": "cmy_Pq7BFjHCWSaKBJoC",
+                  "title": "제목수정",
+                  "content": "내용수정",
+                  "image": "string",
+                  "download": "string",
+                  "videoLink": "https://www.aiapp.help"
+              }'
 ```
 
 **Responses Body:**
@@ -979,9 +997,10 @@ $ curl -X 'PUT'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1006,14 +1025,14 @@ $ curl -X 'PUT'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "code": "게시글 코드",
-          }'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "code": "게시글 코드",
+              }'
 ```
 
 **Responses Body:**
@@ -1035,7 +1054,6 @@ $ curl -X 'DELETE'\
 | data       `String` | 게시글 코드      |
 
 
----
 
 ---
 
@@ -1047,9 +1065,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1078,16 +1097,16 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/reply' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "content": "dsadasdas",
-          "relationCode": "realationCode
-          "groupCode": "groupCode"
-        }'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/reply' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                  "content": "dsadasdas",
+                  "relationCode": "realationCode
+                  "groupCode": "groupCode"
+                }'
 ```
 
 **Responses Body:**
@@ -1119,9 +1138,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1148,12 +1168,12 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'PUT'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/reply' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
+curl --request 'PUT' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/reply' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
                   "code": "string",
                   "content": "string"
               }'
@@ -1188,9 +1208,10 @@ $ curl -X 'PUT'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1215,12 +1236,12 @@ $ curl -X 'PUT'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/reply' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/reply' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
                   "code": "string",
               }'
 ```
@@ -1247,9 +1268,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1274,14 +1296,14 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/favorite' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "code": "cmy_XXX",
-        }'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "code": "cmy_XXX",
+              }'
 ```
 
 **Responses Body:**
@@ -1307,9 +1329,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1334,14 +1357,14 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/favorite' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "code": "cmy_XXX",
-        }'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "code": "cmy_XXX",
+              }'
 ```
 
 **Responses Body:**
@@ -1366,9 +1389,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1393,12 +1417,12 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/favorite' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
                 "code": "cmy_XXX",
               }'
 ```
@@ -1426,9 +1450,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1453,14 +1478,14 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/favorite' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
-          -H 'Content-Type: application/json' \
-          -d '{
-          "code": "cmy_XXX",
-        }'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "code": "cmy_XXX",
+              }'
 ```
 
 **Responses Body:**
@@ -1486,9 +1511,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -1506,10 +1532,10 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'GET'\ 
-        'https://api.aiapp.link/content/V2/community/{menuCode}/detail?code={code}' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/{menuCode}/detail?code={code}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -1588,18 +1614,19 @@ $ curl -X 'GET'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Example:**
 
 ```bash
-$ curl -X 'GET'\ 
-        'https://api.aiapp.link/content/V2/community/bookmark/list' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer {token}' \
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/V2/community/bookmark/list' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -1768,17 +1795,18 @@ $ curl -X 'GET'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **Example:**
 
 ```bash
-$ curl -X 'GET' \
-  'https://api.aiapp.link/content/one_day_class' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer {token}' 
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/one_day_class' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' 
 ```
 
 **Responses Body:**
@@ -1882,18 +1910,19 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **Example:**
 
 ```bash
-$ curl -X 'GET' \
-      'https://api.aiapp.link/content/item' \
-      -H 'accept: */*' \
-      -H 'Authorization: Bearer {token}'
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/item' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -1979,9 +2008,10 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **PathParameters**
@@ -1994,10 +2024,10 @@ $ curl -X 'GET' \
 **Example:**
 
 ```bash
-$ curl -X 'GET' \
-      'http://api.aiapp.link/content/item/{itemCode}' \
-      -H 'accept: */*' \
-      -H 'Authorization: Bearer {token}' 
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/item/{itemCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' 
 ```
 
 **Responses Body:**
@@ -2071,10 +2101,10 @@ $ curl -X 'GET' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
-
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2085,10 +2115,10 @@ $ curl -X 'GET' \
 **Example:**
 
 ```bash
-$ curl -X 'POST' \ 
-        'https://api.aiapp.link/content/item/{itemCode}/favorite' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/item/{itemCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -2112,9 +2142,10 @@ $ curl -X 'POST' \
 
 **RequestHeader**
 
-| Name            | Description    |
-|-----------------|----------------|
-| `Authorization` | 로그인 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 
 **PathParameters**
@@ -2126,10 +2157,10 @@ $ curl -X 'POST' \
 **Example:**
 
 ```bash
-$ curl -X 'POST' \ 
-        'https://api.aiapp.link/content/item/{itemCode}/favorite' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/item/{itemCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 ```
 
 **Responses Body:**
@@ -2156,9 +2187,10 @@ $ curl -X 'POST' \
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **QueryParameters**
 
@@ -2169,11 +2201,11 @@ $ curl -X 'POST' \
 **Example:**
 
 ```bash
-$ curl -X 'GET'\ 
-        'https://api.aiapp.link/content/community/main?appCode={appCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
+curl --request 'GET'\
+      --url 'https://api.aiapp.link/aiapp/content/community/main?appCode={appCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json'
 
 ```
 
@@ -2262,6 +2294,13 @@ $ curl -X 'GET'\
 - **Method:** `POST`
 - **Description:** 게시글을 등록합니다.
 
+**RequestHeader**
+
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
+
 **Request Body:**
 
 ```json
@@ -2287,12 +2326,12 @@ $ curl -X 'GET'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/community' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
-        -H 'Content-Type: application/json' \
-          -d '{
+curl --request 'POST'\
+      --url 'https://api.aiapp.link/aiapp/content/community' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
                 "title": "제목2",
                 "content": "내용2",
                 "image": "FLE_2408",
@@ -2325,9 +2364,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2340,9 +2380,10 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X GET 'https://api.aiapp.link/content/community/detail/{communityCode}' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer {token}}' \
+curl --request GET \
+      --url 'https://api.aiapp.link/aiapp/content/community/detail/{communityCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}}'
 ```
 **Responses Body:**
 
@@ -2406,9 +2447,10 @@ $ curl -X GET 'https://api.aiapp.link/content/community/detail/{communityCode}' 
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2420,10 +2462,10 @@ $ curl -X GET 'https://api.aiapp.link/content/community/detail/{communityCode}' 
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/community{communityCode}/bookmark' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/community{communityCode}/bookmark' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
@@ -2449,9 +2491,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2463,10 +2506,10 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/community{communityCode}/favorite' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/community{communityCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
@@ -2492,9 +2535,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2506,10 +2550,10 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/community{communityCode}/favorite' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'POST' \
+      --url 'https://api.aiapp.link/aiapp/content/community{communityCode}/favorite' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
@@ -2534,9 +2578,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **PathParameters**
 
@@ -2548,10 +2593,10 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'DELETE'\ 
-        'https://api.aiapp.link/content/community{communityCode}/bookmark' \
-        -H 'accept: */*' \
-        -H 'Authorization: Bearer {token}'
+curl --request 'DELETE' \
+      --url 'https://api.aiapp.link/aiapp/content/community{communityCode}/bookmark' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
@@ -2577,9 +2622,10 @@ $ curl -X 'DELETE'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **Request Body:**
 
@@ -2602,17 +2648,16 @@ $ curl -X 'DELETE'\
 **Example:**
 
 ```bash
-$ curl -X 'POST'\ 
-        'https://api.aiapp.link/content/community/reply' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "code": "cmy_r3soppWBxbm7uTyP",
-            "content": "string",
-            "clientName": "string"
-          }'
-
+curl --request 'POST'\
+      --url 'https://api.aiapp.link/aiapp/content/community/reply' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+                "code": "cmy_r3soppWBxbm7uTyP",
+                "content": "string",
+                "clientName": "string"
+              }'
 ```
 
 **Responses Body:**
@@ -2645,9 +2690,10 @@ $ curl -X 'POST'\
 
 **RequestHeader**
 
-| Name            | Description        |
-|-----------------|--------------------|
-| `Authorization` | 로그인 App 회원의 JWT 토큰 |
+| Name                | Description        |
+|---------------------|--------------------|
+| `Authorization`     | 로그인 App 회원의 JWT 토큰 |
+| `Authorization-Key` | API 엑세스 key        |
 
 **QueryParameters**
 
@@ -2658,10 +2704,10 @@ $ curl -X 'POST'\
 **Example:**
 
 ```bash
-$ curl -X 'GET'\ 
-        'https://api.aiapp.link/content/community/list?appCode={appCode}' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer {token}' \
+curl --request 'GET' \
+      --url 'https://api.aiapp.link/aiapp/content/community/list?appCode={appCode}' \
+      --header 'Authorization-Key: {API Key}' \
+      --header 'Authorization: Bearer {token}'
 
 ```
 
