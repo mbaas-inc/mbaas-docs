@@ -4,5 +4,7 @@ sidebar_position: 1
 
 # mbaas Intro
 
-전체적인 토큰 키발급 및 사용법 작성
+API Key 필수 !!
+
+App 내 사용 API
 
