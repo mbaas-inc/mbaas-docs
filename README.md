@@ -1,1 +1,1 @@
-[mBaaS Docs ( App API )](https://docs.aiapp.help/docs/API%EB%AA%A9%EB%A1%9D/app-content/)
+[mBaaS Docs ( App API )](https://docs.mbaas.kr)
